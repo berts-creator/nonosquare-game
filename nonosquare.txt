@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NoNoSquare Prototype</title>
+  <style>
+    body { font-family: Arial; text-align: center; }
+    #gameArea {
+      width: 400px;
+      height: 300px;
+      border: 2px solid black;
+      margin: 20px auto;
+      position: relative;
+      background: #eee;
+    }
+    .player, .npc {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+    }
+    .player { background: blue; bottom: 10px; left: 180px; }
+    .npc { background: red; top: 10px; left: 180px; }
+    #alertBox {
+      margin-top: 10px;
+      padding: 10px;
+      font-weight: bold;
+    }
+    .safe { background: lightgreen; }
+    .danger { background: red; color: white; }
+  </style>
+</head>
+<body>
+
+<h2>NoNoSquare (Prototype)</h2>
+
+<div id="gameArea">
+  <div class="player" id="player"></div>
+  <div class="npc" id="npc"></div>
+</div>
+
+<div id="alertBox" class="safe">Aman...</div>
+
+<div>
+  <button onclick="action('run')">Kabur</button>
+  <button onclick="action('fight')">Lawan</button>
+  <button onclick="action('wait')">Diam</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+let npc = document.getElementById("npc");
+let alertBox = document.getElementById("alertBox");
+let result = document.getElementById("result");
+
+let npcY = 10;
+let gameOver = false;
+
+function moveNPC() {
+  if (gameOver) return;
+
+  npcY += 5;
+  npc.style.top = npcY + "px";
+
+  if (npcY > 150) {
+    alertBox.className = "danger";
+    alertBox.innerText = "Bahaya! Orang mencurigakan mendekat!";
+  }
+
+  if (npcY > 230) {
+    result.innerText = "Kamu tertangkap! Game Over!";
+    gameOver = true;
+  }
+
+  setTimeout(moveNPC, 700);
+}
+
+function action(type) {
+  if (gameOver) return;
+
+  let chance = Math.random();
+
+  if (alertBox.classList.contains("danger")) {
+    if (type === "run" && chance > 0.3) {
+      result.innerText = "Berhasil kabur! Kamu selamat!";
+      gameOver = true;
+    } else if (type === "fight" && chance > 0.5) {
+      result.innerText = "Kamu berhasil melawan!";
+      gameOver = true;
+    } else {
+      result.innerText = "Gagal! NPC menangkap kamu!";
+      gameOver = true;
+    }
+  } else {
+    result.innerText = "Situasi masih aman, tetap waspada!";
+  }
+}
+
+moveNPC();
+</script>
+
+</body>
+</html>
