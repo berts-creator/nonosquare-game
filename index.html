@@ -6,26 +6,29 @@
   <style>
     body {
       text-align: center;
-      color: white;
       font-family: Arial;
-
-      /* 🎯 MENU + PROLOG PAKAI PLAIN BACKGROUND */
+      color: white;
       background: #222;
     }
 
-    #menu, #genderMenu, #prolog {
-      margin-top: 80px;
+    /* 🔳 KOTAK UTAMA UI (MENU / GENDER / PROLOG) */
+    .card {
+      width: 520px;
+      margin: 80px auto;
+      padding: 25px;
+      background: rgba(0,0,0,0.7);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
     }
 
     #genderMenu, #prolog {
       display: none;
-      width: 400px;
-      margin: 50px auto;
     }
 
     #prolog {
       text-align: left;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     #gameArea {
@@ -35,7 +38,6 @@
       margin: 20px auto;
       position: relative;
 
-      /* 🎮 ONLY GAME HAS BACKGROUND */
       background-image: url("background_1.jpg");
       background-size: cover;
       background-position: center;
@@ -77,16 +79,12 @@
       50% { opacity: 0.4; }
     }
 
-    #npcClose {
-      width: 150px;
-      height: 150px;
-      object-fit: contain;
-    }
-
     button {
-      padding: 10px;
+      padding: 10px 14px;
       margin: 5px;
       cursor: pointer;
+      border-radius: 6px;
+      border: none;
     }
 
     #actions button {
@@ -100,21 +98,22 @@
 
 <h2>🎮 NoNoSquare</h2>
 
-<!-- ▶ PLAY MENU -->
-<div id="menu">
+<!-- ▶ MENU CARD -->
+<div id="menu" class="card">
+  <h3>Welcome</h3>
   <button onclick="goToGender()">▶ Play</button>
 </div>
 
-<!-- 👦👧 GENDER -->
-<div id="genderMenu">
+<!-- 👤 GENDER CARD -->
+<div id="genderMenu" class="card">
   <h3>Pilih Karakter</h3>
   <button onclick="chooseGender('cowok')">👦 Cowok</button>
   <button onclick="chooseGender('cewek')">👧 Cewek</button>
 </div>
 
-<!-- 📖 PROLOG -->
-<div id="prolog">
-  <p><b>Prolog:</b></p>
+<!-- 📖 PROLOG CARD -->
+<div id="prolog" class="card">
+  <h3>Prolog</h3>
   <p>
     Kamu berjalan sendirian di jalan yang sepi.<br><br>
     Tidak ada orang di sekitar.<br>
@@ -284,8 +283,8 @@ function action(type) {
       result.innerText = "🚓 Ada orang datang! Kamu diselamatkan!";
     } else {
       result.innerText = "📵 Tidak ada respon... kamu tertangkap.";
+      gameOver = true;
     }
-    gameOver = true;
     return;
   }
 }
