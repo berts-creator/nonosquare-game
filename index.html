@@ -9,10 +9,19 @@
       background: #222;
       color: white;
       font-family: Arial;
+      font-family: Arial;
     }
 
     #menu {
-      margin-top: 50px;
+      margin-top: 80px;
+    }
+
+    #prolog {
+      display: none;
+      width: 400px;
+      margin: 50px auto;
+      text-align: left;
+      line-height: 1.5;
     }
 
     #gameArea {
@@ -38,15 +47,8 @@
       image-rendering: pixelated;
     }
 
-    #player {
-      bottom: 10px;
-      left: 20px;
-    }
-
-    #npc {
-      bottom: 10px;
-      left: 300px;
-    }
+    #player { bottom: 10px; left: 20px; }
+    #npc { bottom: 10px; left: 300px; }
 
     #firstPerson {
       display: none;
@@ -76,18 +78,12 @@
       width: 150px;
       height: 150px;
       object-fit: contain;
-      image-rendering: pixelated;
     }
 
     button {
       padding: 10px;
       margin: 5px;
       cursor: pointer;
-    }
-
-    #actions button {
-      padding: 10px;
-      margin: 5px;
     }
   </style>
 </head>
@@ -98,9 +94,22 @@
 
 <!-- MENU -->
 <div id="menu">
-  <h3>Pilih Karakter</h3>
-  <button onclick="chooseCharacter('cowok')">👦 Cowok</button>
-  <button onclick="chooseCharacter('cewek')">👧 Cewek</button>
+  <button onclick="startProlog()">▶ Play</button>
+</div>
+
+<!-- PROLOG -->
+<div id="prolog">
+  <p><b>Prolog:</b></p>
+  <p>
+    Kamu berjalan sendirian di jalan yang sepi.<br><br>
+    Tidak ada orang di sekitar.<br>
+    Hanya suara langkah kakimu sendiri.<br><br>
+    Tapi kamu merasa... seseorang mengikuti dari belakang.<br><br>
+    Kamu mencoba mempercepat langkahmu.<br>
+    Suara itu juga ikut semakin dekat.
+  </p>
+
+  <button onclick="startGame()">Continue</button>
 </div>
 
 <!-- GAME -->
@@ -124,6 +133,8 @@ let npc = document.getElementById("npc");
 let player = document.getElementById("player");
 let npcClose = document.getElementById("npcClose");
 
+let menu = document.getElementById("menu");
+let prolog = document.getElementById("prolog");
 let gameArea = document.getElementById("gameArea");
 let firstPerson = document.getElementById("firstPerson");
 let actions = document.getElementById("actions");
@@ -134,24 +145,20 @@ let gameOver = false;
 let switched = false;
 let stage = 1;
 
-// FORCE CLEAN START
-firstPerson.style.display = "none";
-actions.style.display = "none";
+// 🔥 START PROLOG
+function startProlog() {
+  menu.style.display = "none";
+  prolog.style.display = "block";
+}
 
-// PILIH KARAKTER
-function chooseCharacter(gender) {
-  if (gender === "cowok") {
-    player.src = "cowok.png";
-    npc.src = "cewek_npc.png";
-    npcClose.src = "cewek_npc.png";
-  } else {
-    player.src = "cewek.png";
-    npc.src = "cowok_npc.png";
-    npcClose.src = "cowok_npc.png";
-  }
-
-  document.getElementById("menu").style.display = "none";
+// 🔥 START GAME
+function startGame() {
+  prolog.style.display = "none";
   gameArea.style.display = "block";
+
+  player.src = "cowok.png";
+  npc.src = "cewek_npc.png";
+  npcClose.src = "cewek_npc.png";
 
   npcX = 300;
   npc.style.left = npcX + "px";
@@ -161,7 +168,6 @@ function chooseCharacter(gender) {
   stage = 1;
 
   actions.style.display = "none";
-  actions.innerHTML = "";
   result.innerText = "";
   firstPerson.style.display = "none";
 
@@ -175,9 +181,7 @@ function moveNPC() {
   npcX -= 12;
   npc.style.left = npcX + "px";
 
-  let distance = npcX - 20;
-
-  if (distance <= 40 && !switched) {
+  if (npcX <= 60 && !switched) {
     switchPOV();
   }
 
@@ -220,7 +224,6 @@ function action(type) {
 
   let chance = Math.random();
 
-  // HELP 1 (25% berhasil)
   if (type === "help1") {
     if (chance < 0.25) {
       result.innerText = "📡 Sinyal ditemukan! Ada orang di sekitar!";
@@ -233,7 +236,6 @@ function action(type) {
     return;
   }
 
-  // PUSH → lanjut stage 2
   if (type === "push") {
     stage = 2;
     result.innerText = "💥 Kamu mendorongnya! Dia masih mengejar...";
@@ -241,14 +243,12 @@ function action(type) {
     return;
   }
 
-  // RUN → 100% selamat
   if (type === "run") {
     result.innerText = "🏃 Kamu berhasil kabur dan SELAMAT!";
     gameOver = true;
     return;
   }
 
-  // HELP 2 → 50%
   if (type === "help2") {
     if (chance > 0.5) {
       result.innerText = "🚓 Ada orang datang! Kamu diselamatkan!";
