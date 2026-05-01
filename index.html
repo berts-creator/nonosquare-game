@@ -20,7 +20,14 @@
       height: 300px;
       margin: 20px auto;
       position: relative;
-      background: #777;
+
+      /* BACKGROUND */
+      background-image: 
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+        url("background_1.jpg");
+      background-size: cover;
+      background-position: center;
+
       border: 4px solid #333;
     }
 
@@ -87,7 +94,7 @@
   <button onclick="chooseCharacter('cewek')">👧 Cewek</button>
 </div>
 
-<!-- TOP VIEW -->
+<!-- GAME -->
 <div id="gameArea">
   <img id="player" class="sprite" src="">
   <img id="npc" class="sprite" src="">
