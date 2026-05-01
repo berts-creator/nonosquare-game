@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NoNoSquare</title>
+  <title>NoNoSquare Pixel</title>
   <style>
     body {
-      font-family: Arial;
       text-align: center;
-      background: linear-gradient(to bottom, #87ceeb, #ffffff);
-    }
-
-    h2 {
-      color: #333;
+      background: #222;
+      color: white;
+      font-family: Arial;
     }
 
     #gameArea {
@@ -18,99 +15,100 @@
       height: 300px;
       margin: 20px auto;
       position: relative;
-      border-radius: 10px;
-      overflow: hidden;
-      background: url('https://i.imgur.com/8Qf6QYb.png');
-      background-size: cover;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      background: #666;
+      border: 4px solid #333;
     }
 
-    .player, .npc {
-      width: 50px;
-      height: 50px;
+    .sprite {
+      width: 48px;
+      height: 48px;
       position: absolute;
-      font-size: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: 0.3s;
+      image-rendering: pixelated;
     }
 
-    .player {
+    #player {
       bottom: 10px;
       left: 170px;
     }
 
-    .npc {
+    #npc {
       top: 10px;
       left: 170px;
     }
 
-    #alertBox {
-      margin-top: 10px;
-      padding: 10px;
+    /* FIRST PERSON */
+    #firstPerson {
+      display: none;
+      width: 400px;
+      height: 300px;
+      margin: auto;
+      background: black;
+      border: 4px solid #333;
+      position: relative;
+    }
+
+    #npcClose {
+      width: 150px;
+      margin-top: 60px;
+      image-rendering: pixelated;
+    }
+
+    #warning {
+      color: red;
       font-weight: bold;
-      border-radius: 5px;
-    }
-
-    .safe {
-      background: lightgreen;
-    }
-
-    .danger {
-      background: red;
-      color: white;
       animation: blink 0.5s infinite;
     }
 
     @keyframes blink {
-      0% { opacity: 1; }
       50% { opacity: 0.5; }
-      100% { opacity: 1; }
     }
 
     button {
-      padding: 10px 15px;
+      padding: 10px;
       margin: 5px;
-      border: none;
-      border-radius: 5px;
       cursor: pointer;
-      background: #333;
-      color: white;
-    }
-
-    button:hover {
-      background: #555;
     }
   </style>
 </head>
 
 <body>
 
-<h2>🎮 NoNoSquare</h2>
+<h2>🎮 NoNoSquare Pixel</h2>
 
+<!-- TOP VIEW -->
 <div id="gameArea">
-  <div class="player" id="player">🧑</div>
-  <div class="npc" id="npc">😈</div>
+  <img id="player" class="sprite"
+    src="https://i.imgur.com/7kceK0F.png">
+
+  <img id="npc" class="sprite"
+    src="https://i.imgur.com/2RMzQ8p.png">
 </div>
 
-<div id="alertBox" class="safe">Aman...</div>
+<!-- FIRST PERSON -->
+<div id="firstPerson">
+  <div id="warning">⚠️ Terlalu dekat!</div>
+  <img id="npcClose"
+    src="https://i.imgur.com/2RMzQ8p.png">
+</div>
 
-<div>
+<div id="actions" style="display:none;">
   <button onclick="action('run')">🏃 Kabur</button>
-  <button onclick="action('fight')">✊ Lawan</button>
-  <button onclick="action('wait')">😶 Diam</button>
+  <button onclick="action('push')">✋ Dorong</button>
+  <button onclick="action('help')">📞 Bantuan</button>
 </div>
 
 <p id="result"></p>
 
 <script>
 let npc = document.getElementById("npc");
-let alertBox = document.getElementById("alertBox");
+let gameArea = document.getElementById("gameArea");
+let firstPerson = document.getElementById("firstPerson");
+let actions = document.getElementById("actions");
 let result = document.getElementById("result");
 
 let npcY = 10;
 let gameOver = false;
+let switched = false;
 
 function moveNPC() {
   if (gameOver) return;
@@ -118,17 +116,18 @@ function moveNPC() {
   npcY += 4;
   npc.style.top = npcY + "px";
 
-  if (npcY > 120) {
-    alertBox.className = "danger";
-    alertBox.innerText = "⚠️ Bahaya! Orang mencurigakan mendekat!";
+  if (npcY > 150 && !switched) {
+    switchPOV();
   }
 
-  if (npcY > 230) {
-    result.innerText = "💀 Kamu tertangkap! Game Over!";
-    gameOver = true;
-  }
+  setTimeout(moveNPC, 400);
+}
 
-  setTimeout(moveNPC, 500);
+function switchPOV() {
+  switched = true;
+  gameArea.style.display = "none";
+  firstPerson.style.display = "block";
+  actions.style.display = "block";
 }
 
 function action(type) {
@@ -136,20 +135,17 @@ function action(type) {
 
   let chance = Math.random();
 
-  if (alertBox.classList.contains("danger")) {
-    if (type === "run" && chance > 0.3) {
-      result.innerText = "✅ Berhasil kabur!";
-      gameOver = true;
-    } else if (type === "fight" && chance > 0.5) {
-      result.innerText = "💥 Kamu berhasil melawan!";
-      gameOver = true;
-    } else {
-      result.innerText = "❌ Gagal! Kamu tertangkap!";
-      gameOver = true;
-    }
+  if (type === "run" && chance > 0.3) {
+    result.innerText = "✅ Kamu berhasil kabur!";
+  } else if (type === "push" && chance > 0.5) {
+    result.innerText = "💥 Kamu berhasil menjauhkan!";
+  } else if (type === "help" && chance > 0.4) {
+    result.innerText = "🚓 Bantuan datang!";
   } else {
-    result.innerText = "🙂 Masih aman, tetap waspada!";
+    result.innerText = "❌ Kamu gagal!";
   }
+
+  gameOver = true;
 }
 
 moveNPC();
