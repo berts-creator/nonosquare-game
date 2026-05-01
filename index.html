@@ -37,7 +37,6 @@
       image-rendering: pixelated;
     }
 
-    /* SIDE VIEW */
     #player {
       bottom: 10px;
       left: 20px;
@@ -45,7 +44,7 @@
 
     #npc {
       bottom: 10px;
-      left: 300px; /* sekarang pakai LEFT */
+      left: 300px;
     }
 
     #firstPerson {
@@ -105,6 +104,7 @@
   <img id="npcClose" src="">
 </div>
 
+<!-- ACTION BUTTON -->
 <div id="actions" style="display:none;">
   <button onclick="action('run')">🏃 Kabur</button>
   <button onclick="action('push')">✋ Dorong</button>
@@ -115,7 +115,9 @@
 
 <script>
 let npc = document.getElementById("npc");
+let player = document.getElementById("player");
 let npcClose = document.getElementById("npcClose");
+
 let gameArea = document.getElementById("gameArea");
 let firstPerson = document.getElementById("firstPerson");
 let actions = document.getElementById("actions");
@@ -127,8 +129,6 @@ let switched = false;
 
 // PILIH KARAKTER
 function chooseCharacter(gender) {
-  let player = document.getElementById("player");
-
   if (gender === "cowok") {
     player.src = "cowok.png";
     npc.src = "cewek_npc.png";
@@ -148,29 +148,35 @@ function chooseCharacter(gender) {
   moveNPC();
 }
 
-// NPC bergerak KE KIRI
+// NPC GERAK KE KIRI
 function moveNPC() {
   if (gameOver) return;
 
   npcX -= 5;
   npc.style.left = npcX + "px";
 
-  if (npcX < 120 && !switched) {
+  // 🔥 CEK JARAK KE PLAYER
+  let distance = npcX - 20;
+
+  if (distance <= 40 && !switched) {
     switchPOV();
   }
 
   setTimeout(moveNPC, 400);
 }
 
-// pindah POV
+// SWITCH KE FIRST PERSON + TOMBOL MUNCUL
 function switchPOV() {
   switched = true;
+
   gameArea.style.display = "none";
   firstPerson.style.display = "block";
+
+  // tombol baru baru muncul di sini
   actions.style.display = "block";
 }
 
-// aksi player
+// AKSI PLAYER
 function action(type) {
   if (gameOver) return;
 
