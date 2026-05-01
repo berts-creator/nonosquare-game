@@ -9,30 +9,37 @@
       font-family: Arial;
       background: #222;
       color: white;
+
+      /* 🔥 CENTER FULL SCREEN */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
 
-    /* 🔳 1 CARD UI BESAR SEMUA */
+    /* 🔳 MAIN CARD */
     .card {
       width: 520px;
       min-height: 420px;
       padding: 20px;
+
       background: rgba(0,0,0,0.75);
       border-radius: 12px;
       border: 2px solid rgba(255,255,255,0.2);
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
       text-align: center;
-      position: relative;
     }
 
     .hidden {
       display: none;
     }
 
-    /* 🎮 GAME AREA DI DALAM CARD */
+    /* 🎮 GAME AREA */
     #gameArea {
       width: 400px;
       height: 300px;
@@ -46,7 +53,6 @@
       border: 2px solid rgba(255,255,255,0.2);
     }
 
-    /* ❗ FIX BUG NPC BESAR */
     .sprite {
       width: 64px;
       height: 64px;
@@ -59,7 +65,7 @@
     #player { left: 20px; }
     #npc { left: 300px; }
 
-    /* 👁 FIRST PERSON OVERLAY DI DALAM CARD */
+    /* 👁 POV */
     #firstPerson {
       display: none;
       width: 400px;
@@ -71,6 +77,13 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+    }
+
+    #npcClose {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      margin-bottom: 10px;
     }
 
     #warning {
@@ -97,15 +110,15 @@
       margin: 5px;
     }
 
-    #result {
-      margin-top: 10px;
+    #prolog p {
+      text-align: center;
+      line-height: 1.6;
     }
   </style>
 </head>
 
 <body>
 
-<!-- 🔳 1 CARD UI -->
 <div class="card">
 
   <h2>🎮 NoNoSquare</h2>
@@ -125,7 +138,7 @@
   <!-- PROLOG -->
   <div id="prolog" class="hidden">
     <h3>Prolog</h3>
-    <p style="text-align:left">
+    <p>
       Kamu berjalan sendirian di jalan yang sepi.<br><br>
       Tidak ada orang di sekitar.<br>
       Hanya suara langkah kakimu sendiri.<br><br>
@@ -143,8 +156,8 @@
 
   <!-- POV -->
   <div id="firstPerson">
+    <img id="npcClose" src="">
     <div id="warning">⚠️ Ada seseorang yang ingin memegangmu!</div>
-    <div id="npcClose"></div>
   </div>
 
   <!-- ACTION -->
@@ -165,6 +178,7 @@ let result = document.getElementById("result");
 
 let player = document.getElementById("player");
 let npc = document.getElementById("npc");
+let npcClose = document.getElementById("npcClose");
 
 let npcX = 300;
 let gameOver = false;
@@ -186,7 +200,7 @@ function chooseGender(gender) {
   prolog.classList.remove("hidden");
 }
 
-/* 🎬 START GAME */
+/* 🎬 START */
 function startGame() {
   prolog.classList.add("hidden");
   gameArea.classList.remove("hidden");
@@ -194,9 +208,11 @@ function startGame() {
   if (selectedGender === "cowok") {
     player.src = "cowok.png";
     npc.src = "cewek_npc.png";
+    npcClose.src = "cewek_npc.png";
   } else {
     player.src = "cewek.png";
     npc.src = "cowok_npc.png";
+    npcClose.src = "cowok_npc.png";
   }
 
   npcX = 300;
@@ -286,8 +302,8 @@ function action(type) {
       result.innerText = "🚓 Diselamatkan!";
     } else {
       result.innerText = "📵 Tertangkap.";
+      gameOver = true;
     }
-    gameOver = true;
   }
 }
 </script>
