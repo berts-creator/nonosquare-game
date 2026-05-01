@@ -57,12 +57,6 @@
       position: relative;
     }
 
-    #npcClose {
-      width: 150px;
-      margin-top: 60px;
-      image-rendering: pixelated;
-    }
-
     #warning {
       color: red;
       font-weight: bold;
@@ -104,12 +98,7 @@
   <img id="npcClose" src="">
 </div>
 
-<!-- ACTION -->
-<div id="actions" style="display:none;">
-  <button onclick="action('run')">🏃 Kabur</button>
-  <button onclick="action('push')">✋ Dorong</button>
-  <button onclick="action('help')">📞 Bantuan</button>
-</div>
+<div id="actions" style="display:none;"></div>
 
 <p id="result"></p>
 
@@ -126,6 +115,7 @@ let result = document.getElementById("result");
 let npcX = 300;
 let gameOver = false;
 let switched = false;
+let stage = 1;
 
 // PILIH KARAKTER
 function chooseCharacter(gender) {
@@ -148,11 +138,11 @@ function chooseCharacter(gender) {
   moveNPC();
 }
 
-// NPC LEBIH CEPAT
+// NPC CHASE (lebih cepat)
 function moveNPC() {
   if (gameOver) return;
 
-  npcX -= 12; // 🔥 DIPERCEPAT (sebelumnya 5)
+  npcX -= 12;
   npc.style.left = npcX + "px";
 
   let distance = npcX - 20;
@@ -161,35 +151,77 @@ function moveNPC() {
     switchPOV();
   }
 
-  setTimeout(moveNPC, 200); // 🔥 lebih cepat juga
+  setTimeout(moveNPC, 200);
 }
 
 // SWITCH POV
 function switchPOV() {
   switched = true;
+  stage = 1;
 
   gameArea.style.display = "none";
   firstPerson.style.display = "block";
   actions.style.display = "block";
+
+  renderButtons();
+  result.innerText = "Apa yang akan kamu lakukan?";
 }
 
-// AKSI
+// RENDER BUTTONS SESUAI STAGE
+function renderButtons() {
+  if (stage === 1) {
+    actions.innerHTML = `
+      <button onclick="action('push')">✋ Push</button>
+      <button onclick="action('help1')">📞 Help</button>
+    `;
+  }
+
+  if (stage === 2) {
+    actions.innerHTML = `
+      <button onclick="action('run')">🏃 Run</button>
+      <button onclick="action('help2')">📞 Help</button>
+    `;
+  }
+}
+
+// LOGIC ACTION + ENDING
 function action(type) {
   if (gameOver) return;
 
   let chance = Math.random();
 
-  if (type === "run" && chance > 0.3) {
-    result.innerText = "✅ Kamu berhasil kabur!";
-  } else if (type === "push" && chance > 0.5) {
-    result.innerText = "💥 Kamu berhasil menjauhkan!";
-  } else if (type === "help" && chance > 0.4) {
-    result.innerText = "🚓 Bantuan datang!";
-  } else {
-    result.innerText = "❌ Kamu gagal!";
+  // HELP pertama → langsung gagal
+  if (type === "help1") {
+    result.innerText = "📵 Tidak ada sinyal, tidak ada orang di sekitar... kamu gagal.";
+    gameOver = true;
+    return;
   }
 
-  gameOver = true;
+  // PUSH → lanjut stage 2
+  if (type === "push") {
+    stage = 2;
+    result.innerText = "💥 Kamu berhasil mendorongnya! Dia masih mengejar...";
+    renderButtons();
+    return;
+  }
+
+  // RUN → 100% selamat
+  if (type === "run") {
+    result.innerText = "🏃 Kamu kabur dan SELAMAT!";
+    gameOver = true;
+    return;
+  }
+
+  // HELP kedua → 50% chance
+  if (type === "help2") {
+    if (chance > 0.5) {
+      result.innerText = "🚓 Ada orang lewat! Kamu diselamatkan!";
+    } else {
+      result.innerText = "📵 Tidak ada yang merespon... kamu tertangkap.";
+    }
+    gameOver = true;
+    return;
+  }
 }
 </script>
 
