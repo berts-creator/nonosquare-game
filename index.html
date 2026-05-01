@@ -21,7 +21,6 @@
       margin: 20px auto;
       position: relative;
 
-      /* BACKGROUND */
       background-image: 
         linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
         url("background_1.jpg");
@@ -36,7 +35,6 @@
       height: 64px;
       position: absolute;
       image-rendering: pixelated;
-      transition: 0.2s linear;
     }
 
     /* SIDE VIEW */
@@ -47,10 +45,9 @@
 
     #npc {
       bottom: 10px;
-      right: 20px;
+      left: 300px; /* sekarang pakai LEFT */
     }
 
-    /* FIRST PERSON */
     #firstPerson {
       display: none;
       width: 400px;
@@ -145,15 +142,18 @@ function chooseCharacter(gender) {
   document.getElementById("menu").style.display = "none";
   gameArea.style.display = "block";
 
+  npcX = 300;
+  npc.style.left = npcX + "px";
+
   moveNPC();
 }
 
-// NPC bergerak
+// NPC bergerak KE KIRI
 function moveNPC() {
   if (gameOver) return;
 
   npcX -= 5;
-  npc.style.right = npcX + "px";
+  npc.style.left = npcX + "px";
 
   if (npcX < 120 && !switched) {
     switchPOV();
