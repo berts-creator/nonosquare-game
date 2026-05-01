@@ -36,16 +36,18 @@
       height: 64px;
       position: absolute;
       image-rendering: pixelated;
+      transition: 0.2s linear;
     }
 
+    /* SIDE VIEW */
     #player {
       bottom: 10px;
-      left: 170px;
+      left: 20px;
     }
 
     #npc {
-      top: 10px;
-      left: 170px;
+      bottom: 10px;
+      right: 20px;
     }
 
     /* FIRST PERSON */
@@ -122,7 +124,7 @@ let firstPerson = document.getElementById("firstPerson");
 let actions = document.getElementById("actions");
 let result = document.getElementById("result");
 
-let npcY = 10;
+let npcX = 300;
 let gameOver = false;
 let switched = false;
 
@@ -150,10 +152,10 @@ function chooseCharacter(gender) {
 function moveNPC() {
   if (gameOver) return;
 
-  npcY += 4;
-  npc.style.top = npcY + "px";
+  npcX -= 5;
+  npc.style.right = npcX + "px";
 
-  if (npcY > 150 && !switched) {
+  if (npcX < 120 && !switched) {
     switchPOV();
   }
 
