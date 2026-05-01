@@ -6,20 +6,27 @@
   <style>
     body {
       text-align: center;
-      background: #222;
       color: white;
       font-family: Arial;
-      font-family: Arial;
+
+      background-image: 
+        linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+        url("background_1.jpg");
+      background-size: cover;
+      background-position: center;
     }
 
-    #menu {
+    #menu, #genderMenu, #prolog {
       margin-top: 80px;
     }
 
-    #prolog {
+    #genderMenu, #prolog {
       display: none;
       width: 400px;
       margin: 50px auto;
+    }
+
+    #prolog {
       text-align: left;
       line-height: 1.5;
     }
@@ -30,13 +37,6 @@
       height: 300px;
       margin: 20px auto;
       position: relative;
-
-      background-image: 
-        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
-        url("background_1.jpg");
-      background-size: cover;
-      background-position: center;
-
       border: 4px solid #333;
     }
 
@@ -85,6 +85,11 @@
       margin: 5px;
       cursor: pointer;
     }
+
+    #actions button {
+      padding: 10px;
+      margin: 5px;
+    }
   </style>
 </head>
 
@@ -92,21 +97,27 @@
 
 <h2>🎮 NoNoSquare</h2>
 
-<!-- MENU -->
+<!-- 🔥 MAIN MENU (PLAY) -->
 <div id="menu">
-  <button onclick="startProlog()">▶ Play</button>
+  <button onclick="goToGender()">▶ Play</button>
 </div>
 
-<!-- PROLOG -->
+<!-- 🔥 GENDER MENU -->
+<div id="genderMenu">
+  <h3>Pilih Karakter</h3>
+  <button onclick="chooseGender('cowok')">👦 Cowok</button>
+  <button onclick="chooseGender('cewek')">👧 Cewek</button>
+</div>
+
+<!-- 🔥 PROLOG -->
 <div id="prolog">
   <p><b>Prolog:</b></p>
   <p>
     Kamu berjalan sendirian di jalan yang sepi.<br><br>
     Tidak ada orang di sekitar.<br>
     Hanya suara langkah kakimu sendiri.<br><br>
-    Tapi kamu merasa... seseorang mengikuti dari belakang.<br><br>
-    Kamu mencoba mempercepat langkahmu.<br>
-    Suara itu juga ikut semakin dekat.
+    Tapi kamu merasa seseorang mengikuti dari belakang...<br><br>
+    Semakin kamu berjalan, langkah itu semakin dekat.
   </p>
 
   <button onclick="startGame()">Continue</button>
@@ -129,36 +140,52 @@
 <p id="result"></p>
 
 <script>
-let npc = document.getElementById("npc");
-let player = document.getElementById("player");
-let npcClose = document.getElementById("npcClose");
-
 let menu = document.getElementById("menu");
+let genderMenu = document.getElementById("genderMenu");
 let prolog = document.getElementById("prolog");
 let gameArea = document.getElementById("gameArea");
 let firstPerson = document.getElementById("firstPerson");
 let actions = document.getElementById("actions");
 let result = document.getElementById("result");
 
+let player = document.getElementById("player");
+let npc = document.getElementById("npc");
+let npcClose = document.getElementById("npcClose");
+
 let npcX = 300;
 let gameOver = false;
 let switched = false;
 let stage = 1;
+let selectedGender = "";
 
-// 🔥 START PROLOG
-function startProlog() {
+/* ▶ PLAY -> GENDER */
+function goToGender() {
   menu.style.display = "none";
+  genderMenu.style.display = "block";
+}
+
+/* 👦👧 GENDER SELECT */
+function chooseGender(gender) {
+  selectedGender = gender;
+
+  genderMenu.style.display = "none";
   prolog.style.display = "block";
 }
 
-// 🔥 START GAME
+/* ▶ START GAME */
 function startGame() {
   prolog.style.display = "none";
   gameArea.style.display = "block";
 
-  player.src = "cowok.png";
-  npc.src = "cewek_npc.png";
-  npcClose.src = "cewek_npc.png";
+  if (selectedGender === "cowok") {
+    player.src = "cowok.png";
+    npc.src = "cewek_npc.png";
+    npcClose.src = "cewek_npc.png";
+  } else {
+    player.src = "cewek.png";
+    npc.src = "cowok_npc.png";
+    npcClose.src = "cowok_npc.png";
+  }
 
   npcX = 300;
   npc.style.left = npcX + "px";
@@ -168,13 +195,14 @@ function startGame() {
   stage = 1;
 
   actions.style.display = "none";
+  actions.innerHTML = "";
   result.innerText = "";
   firstPerson.style.display = "none";
 
   moveNPC();
 }
 
-// NPC CHASE
+/* NPC CHASE */
 function moveNPC() {
   if (gameOver) return;
 
@@ -188,10 +216,9 @@ function moveNPC() {
   setTimeout(moveNPC, 200);
 }
 
-// SWITCH POV
+/* SWITCH POV */
 function switchPOV() {
   switched = true;
-  stage = 1;
 
   gameArea.style.display = "none";
   firstPerson.style.display = "flex";
@@ -201,7 +228,7 @@ function switchPOV() {
   result.innerText = "Apa yang akan kamu lakukan?";
 }
 
-// BUTTONS
+/* BUTTONS */
 function renderButtons() {
   if (stage === 1) {
     actions.innerHTML = `
@@ -218,7 +245,7 @@ function renderButtons() {
   }
 }
 
-// GAME LOGIC
+/* GAME LOGIC */
 function action(type) {
   if (gameOver) return;
 
