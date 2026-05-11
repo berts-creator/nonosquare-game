@@ -1,312 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>NoNoSquare</title>
+/* =========================
+   🧠 SMARTER NPC AI SYSTEM
+   GANTI function moveNPC()
+   ========================= */
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #222;
-      color: white;
+let npcSpeed = 8;
+let direction = 1;
+let fakeBack = false;
 
-      /* 🔥 CENTER FULL SCREEN */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    /* 🔳 MAIN CARD */
-    .card {
-      width: 520px;
-      min-height: 420px;
-      padding: 20px;
-
-      background: rgba(0,0,0,0.75);
-      border-radius: 12px;
-      border: 2px solid rgba(255,255,255,0.2);
-
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
-      text-align: center;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    /* 🎮 GAME AREA */
-    #gameArea {
-      width: 400px;
-      height: 300px;
-      margin: 10px auto;
-      position: relative;
-
-      background-image: url("background_1.jpg");
-      background-size: cover;
-      background-position: center;
-
-      border: 2px solid rgba(255,255,255,0.2);
-    }
-
-    .sprite {
-      width: 64px;
-      height: 64px;
-      position: absolute;
-      bottom: 10px;
-      image-rendering: pixelated;
-      transition: left 0.2s linear;
-    }
-
-    #player { left: 20px; }
-    #npc { left: 300px; }
-
-    /* 👁 POV */
-    #firstPerson {
-      display: none;
-      width: 400px;
-      height: 300px;
-      margin: 10px auto;
-      background: black;
-      border: 2px solid #333;
-
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #npcClose {
-      width: 120px;
-      height: 120px;
-      object-fit: contain;
-      margin-bottom: 10px;
-    }
-
-    #warning {
-      color: red;
-      font-weight: bold;
-      animation: blink 0.3s infinite;
-      margin-bottom: 10px;
-    }
-
-    @keyframes blink {
-      50% { opacity: 0.4; }
-    }
-
-    button {
-      padding: 10px 14px;
-      margin: 5px;
-      cursor: pointer;
-      border: none;
-      border-radius: 6px;
-    }
-
-    #actions button {
-      padding: 10px;
-      margin: 5px;
-    }
-
-    #prolog p {
-      text-align: center;
-      line-height: 1.6;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="card">
-
-  <h2>🎮 NoNoSquare</h2>
-
-  <!-- MENU -->
-  <div id="menu">
-    <button onclick="goToGender()">▶ Play</button>
-  </div>
-
-  <!-- GENDER -->
-  <div id="genderMenu" class="hidden">
-    <h3>Pilih Karakter</h3>
-    <button onclick="chooseGender('cowok')">👦 Cowok</button>
-    <button onclick="chooseGender('cewek')">👧 Cewek</button>
-  </div>
-
-  <!-- PROLOG -->
-  <div id="prolog" class="hidden">
-    <h3>Prolog</h3>
-    <p>
-      Kamu berjalan sendirian di jalan yang sepi.<br><br>
-      Tidak ada orang di sekitar.<br>
-      Hanya suara langkah kakimu sendiri.<br><br>
-      Tapi kamu merasa seseorang mengikuti dari belakang...
-    </p>
-
-    <button onclick="startGame()">Continue</button>
-  </div>
-
-  <!-- GAME -->
-  <div id="gameArea" class="hidden">
-    <img id="player" class="sprite" src="">
-    <img id="npc" class="sprite" src="">
-  </div>
-
-  <!-- POV -->
-  <div id="firstPerson">
-    <img id="npcClose" src="">
-    <div id="warning">⚠️ Ada seseorang yang ingin memegangmu!</div>
-  </div>
-
-  <!-- ACTION -->
-  <div id="actions"></div>
-
-  <p id="result"></p>
-
-</div>
-
-<script>
-let menu = document.getElementById("menu");
-let genderMenu = document.getElementById("genderMenu");
-let prolog = document.getElementById("prolog");
-let gameArea = document.getElementById("gameArea");
-let firstPerson = document.getElementById("firstPerson");
-let actions = document.getElementById("actions");
-let result = document.getElementById("result");
-
-let player = document.getElementById("player");
-let npc = document.getElementById("npc");
-let npcClose = document.getElementById("npcClose");
-
-let npcX = 300;
-let gameOver = false;
-let switched = false;
-let stage = 1;
-let selectedGender = "";
-
-/* ▶ PLAY */
-function goToGender() {
-  menu.classList.add("hidden");
-  genderMenu.classList.remove("hidden");
-}
-
-/* 👤 GENDER */
-function chooseGender(gender) {
-  selectedGender = gender;
-
-  genderMenu.classList.add("hidden");
-  prolog.classList.remove("hidden");
-}
-
-/* 🎬 START */
-function startGame() {
-  prolog.classList.add("hidden");
-  gameArea.classList.remove("hidden");
-
-  if (selectedGender === "cowok") {
-    player.src = "cowok.png";
-    npc.src = "cewek_npc.png";
-    npcClose.src = "cewek_npc.png";
-  } else {
-    player.src = "cewek.png";
-    npc.src = "cowok_npc.png";
-    npcClose.src = "cowok_npc.png";
-  }
-
-  npcX = 300;
-  npc.style.left = npcX + "px";
-
-  gameOver = false;
-  switched = false;
-  stage = 1;
-
-  actions.innerHTML = "";
-  result.innerText = "";
-
-  moveNPC();
-}
-
-/* 🏃 NPC */
 function moveNPC() {
   if (gameOver) return;
 
-  npcX -= 10;
+  /* 🔥 NPC makin cepat saat dekat */
+  if (npcX < 220) npcSpeed = 10;
+  if (npcX < 160) npcSpeed = 13;
+  if (npcX < 100) npcSpeed = 16;
+
+  /* 🧠 AI RANDOM GERAK */
+  let randomMove = Math.random();
+
+  // 15% NPC pura-pura mundur dulu
+  if (randomMove < 0.15 && !fakeBack) {
+    fakeBack = true;
+    npcX += 30;
+
+    result.innerText = "👀 Orang itu berhenti sebentar...";
+    
+    setTimeout(() => {
+      fakeBack = false;
+    }, 700);
+  }
+
+  // 20% gerak lambat
+  else if (randomMove < 0.35) {
+    npcX -= npcSpeed / 2;
+  }
+
+  // normal chase
+  else {
+    npcX -= npcSpeed;
+  }
+
   npc.style.left = npcX + "px";
 
+  /* 🔥 POV lebih realistis */
   if (npcX <= 60 && !switched) {
     switchPOV();
   }
 
-  setTimeout(moveNPC, 200);
+  /* 🔥 delay random supaya gerakan tidak robot */
+  let randomDelay = 120 + Math.random() * 180;
+
+  setTimeout(moveNPC, randomDelay);
 }
-
-/* 👁 POV */
-function switchPOV() {
-  switched = true;
-
-  gameArea.classList.add("hidden");
-  firstPerson.style.display = "flex";
-
-  renderButtons();
-}
-
-/* 🔘 BUTTONS */
-function renderButtons() {
-  if (stage === 1) {
-    actions.innerHTML = `
-      <button onclick="action('push')">✋ Push</button>
-      <button onclick="action('help1')">📞 Help</button>
-    `;
-  }
-
-  if (stage === 2) {
-    actions.innerHTML = `
-      <button onclick="action('run')">🏃 Run</button>
-      <button onclick="action('help2')">📞 Help</button>
-    `;
-  }
-}
-
-/* 🎮 LOGIC */
-function action(type) {
-  if (gameOver) return;
-
-  let chance = Math.random();
-
-  if (type === "help1") {
-    if (chance < 0.25) {
-      result.innerText = "📡 Ada sinyal!";
-      stage = 2;
-      renderButtons();
-    } else {
-      result.innerText = "📵 Gagal.";
-      gameOver = true;
-    }
-  }
-
-  if (type === "push") {
-    stage = 2;
-    result.innerText = "💥 Kamu mendorongnya!";
-    renderButtons();
-  }
-
-  if (type === "run") {
-    result.innerText = "🏃 SELAMAT!";
-    gameOver = true;
-  }
-
-  if (type === "help2") {
-    if (chance > 0.5) {
-      result.innerText = "🚓 Diselamatkan!";
-    } else {
-      result.innerText = "📵 Tertangkap.";
-      gameOver = true;
-    }
-  }
-}
-</script>
-
-</body>
-</html>
