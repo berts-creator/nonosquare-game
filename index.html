@@ -175,6 +175,7 @@
   <!-- POV -->
   <div id="firstPerson">
     <img id="npcClose" src="">
+
     <div id="warning">
       ⚠️ Ada seseorang yang ingin memegangmu!
     </div>
@@ -210,9 +211,9 @@ let stage = 1;
 
 let selectedGender = "";
 
-/* 🧠 SMART AI */
-let npcSpeed = 8;
-let fakeBack = false;
+/* 🧠 NPC AI */
+let npcSpeed = 6;
+let sprintMode = false;
 
 /* ▶ PLAY */
 function goToGender() {
@@ -246,7 +247,8 @@ function startGame() {
   npcX = 300;
   npc.style.left = npcX + "px";
 
-  npcSpeed = 8;
+  npcSpeed = 6;
+  sprintMode = false;
 
   gameOver = false;
   switched = false;
@@ -260,56 +262,52 @@ function startGame() {
   moveNPC();
 }
 
-/* 🧠 SMART NPC AI */
+/* 🧠 NPC MELIHAT LALU SPRINT */
 function moveNPC() {
+
   if (gameOver) return;
 
-  /* makin dekat makin cepat */
-  if (npcX < 220) npcSpeed = 10;
-  if (npcX < 160) npcSpeed = 13;
-  if (npcX < 100) npcSpeed = 16;
+  /* 👀 melihat player */
+  if (npcX <= 180 && !sprintMode) {
 
-  let randomMove = Math.random();
-
-  /* pura-pura berhenti/mundur */
-  if (randomMove < 0.15 && !fakeBack) {
-    fakeBack = true;
-
-    npcX += 30;
+    sprintMode = true;
 
     result.innerText =
-      "👀 Orang itu berhenti sebentar...";
+      "👀 Orang itu melihatmu...";
 
     setTimeout(() => {
-      fakeBack = false;
+
+      result.innerText =
+        "💨 Dia mulai berlari ke arahmu!";
+
     }, 700);
   }
 
-  /* jalan pelan */
-  else if (randomMove < 0.35) {
-    npcX -= npcSpeed / 2;
+  /* 🏃 sprint */
+  if (sprintMode) {
+    npcSpeed = 18;
   }
 
-  /* sprint normal */
+  /* 🚶 jalan biasa */
   else {
-    npcX -= npcSpeed;
+    npcSpeed = 6;
   }
+
+  npcX -= npcSpeed;
 
   npc.style.left = npcX + "px";
 
-  /* masuk POV */
+  /* 👁 POV */
   if (npcX <= 60 && !switched) {
     switchPOV();
   }
 
-  let randomDelay =
-    120 + Math.random() * 180;
-
-  setTimeout(moveNPC, randomDelay);
+  setTimeout(moveNPC, 180);
 }
 
 /* 👁 POV */
 function switchPOV() {
+
   switched = true;
 
   gameArea.classList.add("hidden");
@@ -323,6 +321,7 @@ function switchPOV() {
 function renderButtons() {
 
   if (stage === 1) {
+
     actions.innerHTML = `
       <button onclick="action('push')">
         ✋ Push
@@ -335,6 +334,7 @@ function renderButtons() {
   }
 
   if (stage === 2) {
+
     actions.innerHTML = `
       <button onclick="action('run')">
         🏃 Run
