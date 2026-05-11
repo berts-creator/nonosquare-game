@@ -120,6 +120,12 @@
     #result {
       min-height: 24px;
       margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    #coinText {
+      margin-top: 10px;
+      color: gold;
     }
   </style>
 </head>
@@ -184,7 +190,13 @@
   <!-- ACTION -->
   <div id="actions"></div>
 
+  <!-- RESULT -->
   <p id="result"></p>
+
+  <!-- COIN -->
+  <h3 id="coinText">
+    🪙 Koin: 0
+  </h3>
 
 </div>
 
@@ -210,6 +222,9 @@ let switched = false;
 let stage = 1;
 
 let selectedGender = "";
+
+/* 🪙 COIN */
+let coins = 0;
 
 /* 🧠 NPC AI */
 let npcSpeed = 6;
@@ -369,7 +384,7 @@ function action(type) {
     } else {
 
       result.innerText =
-        "📵 Tidak ada sinyal...";
+        "❌ Sayang sekali... anda tertangkap.";
 
       gameOver = true;
     }
@@ -389,8 +404,13 @@ function action(type) {
   /* RUN */
   if (type === "run") {
 
+    coins += 100;
+
+    document.getElementById("coinText").innerText =
+      "🪙 Koin: " + coins;
+
     result.innerText =
-      "🏃 Kamu berhasil kabur dan SELAMAT!";
+      "🏆 Kamu berhasil kabur!\n+100 Koin";
 
     gameOver = true;
   }
@@ -400,13 +420,18 @@ function action(type) {
 
     if (chance > 0.5) {
 
+      coins += 100;
+
+      document.getElementById("coinText").innerText =
+        "🪙 Koin: " + coins;
+
       result.innerText =
-        "🚓 Ada orang datang! Kamu diselamatkan!";
+        "🚓 Ada orang datang!\n🏆 Kamu selamat! +100 Koin";
 
     } else {
 
       result.innerText =
-        "📵 Tidak ada respon... kamu tertangkap.";
+        "❌ Sayang sekali... anda tertangkap.";
     }
 
     gameOver = true;
